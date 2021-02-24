@@ -11,14 +11,8 @@ class archivosModelo extends padreModelo{
         
         $archivos = $client->BuscarArchivo(array('Condiciones' => array('Condicion' => array('Tipo' => "FechaInicial",
         'Expresion' => "2019-07-01 00:00:00"))));
-        // echo json_encode($archivos);exit();
-        // $saneado = $sql = filter_var(json_encode($archivos), FILTER_SANITIZE_STRING);
         $outXml = $this->toXml(json_encode($archivos));
-        // var_dump($outXml);exit();
         $sql = $proc->transformToXML($outXml);
-        // $sql = str_replace('"','\"', $sql);
-        // $saneado = mysqli_real_escape_string($sql);
-        // echo $sql;exit();
 
         $result = $bd->prepare($sql);
         $result->execute();
@@ -34,7 +28,7 @@ class archivosModelo extends padreModelo{
         $result = $bd->query("SELECT id, nombre FROM archivos");
         $archivos = array('Archivo' => $result->fetchAll(PDO::FETCH_CLASS,"Archivo"));
         $outXml = $this->toXml(json_encode($archivos));
-        // var_dump($outXml);exit();
+        
         return $proc->transformToXML($outXml);
     }
 
@@ -43,7 +37,7 @@ class archivosModelo extends padreModelo{
         $result = $bd->query("SELECT COUNT(id) as cantidad, extension FROM tipo_archivo GROUP BY extension");
         $archivos = array('Archivo' => $result->fetchAll(PDO::FETCH_CLASS,"CantidadArchivo"));
         $outXml = $this->toXml(json_encode($archivos));
-        // var_dump($outXml);exit();
+        
         return $proc->transformToXML($outXml);
     }
 

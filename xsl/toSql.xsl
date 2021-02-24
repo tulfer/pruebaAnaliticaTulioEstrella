@@ -17,9 +17,28 @@ exclude-result-prefixes="ws">
     <xsl:variable name="nombreArchivo">
         <xsl:value-of select="Nombre"/>
     </xsl:variable>
-    INSERT INTO archivos VALUES(<xsl:value-of select="Id" />,"<xsl:value-of select="translate($nombreArchivo,'áàâäéèêëíìîïóòôöúùûü','aaaaeeeeiiiioooouuuu')" />");
-    INSERT INTO tipo_archivo VALUES(NULL,"<xsl:value-of select="substring-after(Nombre,'.')"/>",<xsl:value-of select="Id"/>);
+    <xsl:variable name="nombreArchivoT">
+        <xsl:value-of select="translate($nombreArchivo,'áàâäéèêëíìîïóòôöúùûü°¨`','aaaaeeeeiiiioooouuuu   ')" />
+    </xsl:variable>
+    INSERT INTO archivos VALUES(<xsl:value-of select="Id" />,"<xsl:value-of select="translate($nombreArchivoT,'&quot;','')" />");
+    INSERT INTO tipo_archivo VALUES(NULL,"<xsl:call-template name="get-file-extension">
+        <xsl:with-param name="path" select="$nombreArchivo" />
+    </xsl:call-template>",<xsl:value-of select="Id"/>);
     </xsl:for-each>
+</xsl:template>
+
+<xsl:template name="get-file-extension">
+    <xsl:param name="path"/>
+    <xsl:choose>
+        <xsl:when test="contains($path, '.')">
+            <xsl:call-template name="get-file-extension">
+                <xsl:with-param name="path" select="substring-after($path, '.')"/>
+            </xsl:call-template>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:value-of select="$path"/>
+        </xsl:otherwise>
+    </xsl:choose>
 </xsl:template>
 
 </xsl:stylesheet>
